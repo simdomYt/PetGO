@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>PetGO 🐾</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --coral:#FF5A3C;--yellow:#FFD93D;--mint:#E8F8F0;--dark:#1A1A2E;
+  --gray:#6B7280;--light:#F9FAFB;--white:#FFFFFF;--red:#EF4444;
+  --green:#22C55E;--blue:#3B82F6;--orange:#F97316;
+  --shadow:0 4px 20px rgba(0,0,0,0.08);--radius:16px;
+}
+body{font-family:'Inter',sans-serif;background:var(--light);color:var(--dark);min-height:100vh}
+h1,h2,h3,h4{font-family:'Nunito',sans-serif}
+button{cursor:pointer;font-family:'Inter',sans-serif;border:none;outline:none}
+input,textarea,select{font-family:'Inter',sans-serif;outline:none}
+
+/* NAV */
+nav{background:var(--white);box-shadow:var(--shadow);position:sticky;top:0;z-index:100;padding:0 24px}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font-family:'Nunito',sans-serif;font-size:28px;font-weight:900;color:var(--coral);letter-spacing:-1px;display:flex;align-items:center;gap:6px;cursor:pointer}
+.logo span{color:var(--dark)}
+.nav-tabs{display:flex;gap:4px}
+.nav-tab{padding:8px 16px;border-radius:10px;font-size:14px;font-weight:600;background:none;color:var(--gray);transition:all .2s}
+.nav-tab:hover{background:var(--mint);color:var(--dark)}
+.nav-tab.active{background:var(--coral);color:var(--white)}
+.nav-user{display:flex;align-items:center;gap:10px}
+.nav-username{font-weight:700;font-size:14px;color:var(--dark)}
+.btn-logout{padding:7px 16px;border-radius:10px;background:var(--light);color:var(--gray);font-size:13px;font-weight:600;transition:all .2s}
+.btn-logout:hover{background:var(--red);color:var(--white)}
+
+/* PAGES */
+.page{display:none;max-width:1100px;margin:0 auto;padding:32px 24px}
+.page.active{display:block}
+
+/* AUTH */
+.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#fff5f3 0%,#e8f8f0 100%)}
+.auth-card{background:var(--white);border-radius:24px;box-shadow:0 8px 40px rgba(255,90,60,.12);padding:48px 40px;width:100%;max-width:420px}
+.auth-logo{font-family:'Nunito',sans-serif;font-size:42px;font-weight:900;color:var(--coral);text-align:center;margin-bottom:8px}
+.auth-tagline{text-align:center;color:var(--gray);font-size:15px;margin-bottom:32px}
+.auth-tabs{display:flex;background:var(--light);border-radius:12px;padding:4px;margin-bottom:28px}
+.auth-tab{flex:1;padding:10px;border-radius:9px;font-size:14px;font-weight:700;background:none;color:var(--gray);transition:all .2s;font-family:'Nunito',sans-serif}
+.auth-tab.active{background:var(--white);color:var(--coral);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:13px;font-weight:600;color:var(--dark);margin-bottom:6px}
+.form-input{width:100%;padding:13px 16px;border:2px solid #E5E7EB;border-radius:12px;font-size:15px;transition:border-color .2s;background:var(--white)}
+.form-input:focus{border-color:var(--coral)}
+.btn-primary{width:100%;padding:14px;border-radius:12px;background:var(--coral);color:var(--white);font-size:16px;font-weight:800;font-family:'Nunito',sans-serif;transition:all .2s;box-shadow:0 4px 14px rgba(255,90,60,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,90,60,.4)}
+.btn-primary:active{transform:translateY(0)}
+.auth-error{color:var(--red);font-size:13px;text-align:center;margin-bottom:12px;font-weight:600}
+
+/* LISTINGS PAGE */
+.section-title{font-size:26px;font-weight:900;color:var(--dark);margin-bottom:6px}
+.section-sub{color:var(--gray);font-size:15px;margin-bottom:24px}
+
+/* FILTERS */
+.filters-wrap{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:28px}
+.filters-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.filter-btn{padding:8px 18px;border-radius:30px;font-size:13px;font-weight:700;background:var(--light);color:var(--gray);border:2px solid transparent;transition:all .2s;font-family:'Nunito',sans-serif}
+.filter-btn:hover{border-color:var(--coral);color:var(--coral)}
+.filter-btn.active{background:var(--coral);color:var(--white);border-color:var(--coral)}
+.search-bar{display:flex;gap:10px;margin-bottom:16px}
+.search-input{flex:1;padding:12px 18px;border:2px solid #E5E7EB;border-radius:30px;font-size:14px;transition:border-color .2s}
+.search-input:focus{border-color:var(--coral)}
+
+/* CARDS */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px}
+.listing-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;cursor:pointer;transition:transform .25s,box-shadow .25s;position:relative}
+.listing-card:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(0,0,0,.12)}
+.card-img-wrap{height:180px;overflow:hidden;background:#f0f0f0;position:relative}
+.card-img-wrap img{width:100%;height:100%;object-fit:cover}
+.card-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:56px;background:linear-gradient(135deg,#ffe5e0,#e8f8f0)}
+.card-frozen-badge{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.6);color:#fff;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:700}
+.card-body{padding:18px}
+.card-pet-type{display:inline-block;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:800;font-family:'Nunito',sans-serif;margin-bottom:8px;text-transform:uppercase}
+.card-pet-type.dog{background:#FFF3E0;color:#F97316}
+.card-pet-type.cat{background:#F3E5F5;color:#9C27B0}
+.card-title{font-size:17px;font-weight:800;color:var(--dark);margin-bottom:4px;font-family:'Nunito',sans-serif}
+.card-breed{font-size:13px;color:var(--gray);margin-bottom:10px}
+.card-footer{display:flex;align-items:center;justify-content:space-between}
+.card-price{font-size:20px;font-weight:900;color:var(--coral);font-family:'Nunito',sans-serif}
+.card-price span{font-size:13px;font-weight:600;color:var(--gray)}
+.stars{display:flex;gap:2px;align-items:center}
+.stars .star{font-size:14px;color:#FFD93D}
+.stars .star.empty{color:#E5E7EB}
+.star-count{font-size:12px;color:var(--gray);margin-left:4px}
+.strike-badge{position:absolute;top:10px;right:10px;background:var(--red);color:#fff;border-radius:8px;padding:3px 8px;font-size:11px;font-weight:800}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;overflow-y:auto;padding:40px 20px}
+.modal-overlay.open{display:flex;align-items:flex-start;justify-content:center}
+.modal{background:var(--white);border-radius:24px;width:100%;max-width:620px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-header{padding:24px 28px 0;display:flex;align-items:flex-start;justify-content:space-between}
+.modal-title{font-size:22px;font-weight:900;font-family:'Nunito',sans-serif}
+.modal-close{width:36px;height:36px;border-radius:50%;background:var(--light);color:var(--gray);font-size:20px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.modal-close:hover{background:var(--red);color:#fff}
+.modal-body{padding:20px 28px 28px}
+
+/* GALLERY */
+.gallery{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:16px}
+.gallery img{width:120px;height:90px;object-fit:cover;border-radius:10px;flex-shrink:0;cursor:pointer;transition:transform .2s}
+.gallery img:hover{transform:scale(1.05)}
+.gallery-main img{width:100%;height:280px;object-fit:cover;border-radius:14px;margin-bottom:12px}
+.listing-detail-price{font-size:32px;font-weight:900;color:var(--coral);font-family:'Nunito',sans-serif;margin-bottom:16px}
+.listing-detail-desc{color:var(--gray);font-size:15px;line-height:1.6;margin-bottom:20px}
+.detail-meta{display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+.detail-meta-item{background:var(--light);padding:8px 16px;border-radius:10px;font-size:13px;font-weight:600}
+.detail-meta-item b{color:var(--coral)}
+
+/* REVIEWS */
+.reviews-section{margin-top:24px;border-top:2px solid var(--light);padding-top:20px}
+.review-form{background:var(--light);border-radius:14px;padding:16px;margin-bottom:16px}
+.stars-pick{display:flex;gap:6px;margin-bottom:10px;font-size:24px;cursor:pointer}
+.stars-pick span{color:#E5E7EB;transition:color .15s}
+.stars-pick span.lit{color:var(--yellow)}
+.review-item{background:var(--white);border:1px solid #E5E7EB;border-radius:12px;padding:14px;margin-bottom:10px}
+.review-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.review-author{font-weight:700;font-size:14px}
+.review-text{font-size:14px;color:var(--gray);line-height:1.5}
+
+/* CHAT */
+.chat-list{display:flex;flex-direction:column;gap:12px}
+.chat-item{background:var(--white);border-radius:14px;box-shadow:var(--shadow);padding:16px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:space-between}
+.chat-item:hover{transform:translateX(4px);border-left:4px solid var(--coral)}
+.chat-item-info{}
+.chat-item-title{font-weight:700;font-size:15px;font-family:'Nunito',sans-serif}
+.chat-item-preview{font-size:13px;color:var(--gray)}
+.chat-unread{background:var(--coral);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.chat-window{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);height:480px;display:flex;flex-direction:column}
+.chat-header{padding:16px 20px;border-bottom:2px solid var(--light);display:flex;align-items:center;gap:12px}
+.chat-back{width:36px;height:36px;border-radius:50%;background:var(--light);font-size:18px;display:flex;align-items:center;justify-content:center}
+.chat-header-title{font-weight:800;font-family:'Nunito',sans-serif}
+.chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:70%;padding:10px 15px;border-radius:16px;font-size:14px;line-height:1.5}
+.msg.mine{align-self:flex-end;background:var(--coral);color:#fff;border-bottom-right-radius:4px}
+.msg.theirs{align-self:flex-start;background:var(--light);color:var(--dark);border-bottom-left-radius:4px}
+.msg-meta{font-size:11px;opacity:.7;margin-top:4px}
+.chat-input-row{padding:14px;border-top:2px solid var(--light);display:flex;gap:10px}
+.chat-input{flex:1;padding:11px 16px;border:2px solid #E5E7EB;border-radius:30px;font-size:14px}
+.chat-input:focus{border-color:var(--coral)}
+.btn-send{padding:11px 22px;border-radius:30px;background:var(--coral);color:#fff;font-weight:700;font-size:14px;transition:all .2s}
+.btn-send:hover{background:#e04d32}
+
+/* MY LISTINGS */
+.my-listing-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;display:flex;gap:16px;margin-bottom:16px;align-items:flex-start}
+.my-listing-img{width:80px;height:80px;border-radius:12px;object-fit:cover;flex-shrink:0;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:30px}
+.my-listing-info{flex:1}
+.my-listing-title{font-weight:800;font-size:16px;font-family:'Nunito',sans-serif;margin-bottom:4px}
+.my-listing-meta{font-size:13px;color:var(--gray);margin-bottom:10px}
+.my-listing-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-sm{padding:7px 15px;border-radius:10px;font-size:13px;font-weight:700;transition:all .2s;font-family:'Nunito',sans-serif}
+.btn-danger{background:#FEE2E2;color:var(--red)}
+.btn-danger:hover{background:var(--red);color:#fff}
+.btn-warning{background:#FEF3C7;color:#D97706}
+.btn-warning:hover{background:#F59E0B;color:#fff}
+.btn-success{background:#D1FAE5;color:#059669}
+.btn-success:hover{background:var(--green);color:#fff}
+.btn-info{background:#DBEAFE;color:var(--blue)}
+.btn-info:hover{background:var(--blue);color:#fff}
+.frozen-badge{display:inline-block;background:#E5E7EB;color:var(--gray);padding:3px 10px;border-radius:8px;font-size:12px;font-weight:700;margin-left:8px}
+
+/* CREATE LISTING */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group-full{grid-column:1/-1}
+.form-select{width:100%;padding:13px 16px;border:2px solid #E5E7EB;border-radius:12px;font-size:15px;background:var(--white);transition:border-color .2s;-webkit-appearance:none}
+.form-select:focus{border-color:var(--coral)}
+.photo-upload-area{border:2px dashed #E5E7EB;border-radius:14px;padding:24px;text-align:center;cursor:pointer;transition:border-color .2s;background:var(--white)}
+.photo-upload-area:hover{border-color:var(--coral)}
+.photo-upload-area input{display:none}
+.photo-preview-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.photo-preview-item{position:relative;width:90px;height:90px}
+.photo-preview-item img{width:100%;height:100%;object-fit:cover;border-radius:10px}
+.photo-remove{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:var(--red);color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center}
+.photo-required-note{font-size:12px;color:var(--gray);margin-top:6px}
+
+/* ADMIN */
+.admin-section{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-bottom:24px}
+.admin-section h3{font-size:18px;font-weight:800;font-family:'Nunito',sans-serif;margin-bottom:16px;color:var(--dark)}
+.admin-listing-row{display:flex;align-items:center;justify-content:space-between;padding:14px;border:1px solid #E5E7EB;border-radius:12px;margin-bottom:10px}
+.admin-listing-info{flex:1}
+.admin-listing-title{font-weight:700;font-size:15px}
+.admin-listing-meta{font-size:13px;color:var(--gray)}
+.admin-actions{display:flex;gap:8px;align-items:center}
+.strike-dot{width:10px;height:10px;border-radius:50%;background:var(--red);display:inline-block}
+.admin-strike-count{font-weight:800;color:var(--red);font-size:14px}
+
+/* ADS */
+.ad-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;transition:transform .25s}
+.ad-card:hover{transform:translateY(-4px)}
+.ad-img{width:100%;height:200px;object-fit:cover}
+.ad-img-placeholder{width:100%;height:200px;display:flex;align-items:center;justify-content:center;font-size:48px;background:linear-gradient(135deg,#ffecd2,#fcb69f)}
+.ad-body{padding:18px}
+.ad-card-title{font-size:17px;font-weight:800;font-family:'Nunito',sans-serif;margin-bottom:6px}
+.ad-card-desc{font-size:14px;color:var(--gray);line-height:1.5;margin-bottom:14px}
+.btn-ad-link{display:inline-block;padding:9px 20px;border-radius:10px;background:var(--coral);color:#fff;font-weight:700;font-size:14px;text-decoration:none;font-family:'Nunito',sans-serif;transition:all .2s}
+.btn-ad-link:hover{background:#e04d32}
+.order-ad-banner{background:linear-gradient(135deg,var(--coral),#ff8c7a);border-radius:var(--radius);padding:28px;text-align:center;margin-bottom:28px;color:#fff}
+.order-ad-banner h3{font-size:22px;font-weight:900;font-family:'Nunito',sans-serif;margin-bottom:8px}
+.order-ad-banner p{font-size:15px;opacity:.9;margin-bottom:18px}
+.btn-tg{display:inline-block;padding:12px 28px;border-radius:12px;background:#fff;color:var(--coral);font-weight:800;font-size:15px;text-decoration:none;font-family:'Nunito',sans-serif;transition:all .2s}
+.btn-tg:hover{transform:scale(1.05)}
+
+/* NOTIFICATION */
+.notif{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--dark);color:#fff;padding:14px 22px;border-radius:14px;font-size:14px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.2);transform:translateY(100px);opacity:0;transition:all .4s;max-width:320px}
+.notif.show{transform:translateY(0);opacity:1}
+.notif.success{background:var(--green)}
+.notif.error{background:var(--red)}
+.notif.info{background:var(--blue)}
+
+/* empty state */
+.empty-state{text-align:center;padding:60px 20px;color:var(--gray)}
+.empty-state .icon{font-size:64px;margin-bottom:16px}
+.empty-state h3{font-size:20px;font-weight:800;font-family:'Nunito',sans-serif;color:var(--dark);margin-bottom:8px}
+
+/* ADMIN BAN/STRIKE MODAL specifics */
+.reason-input{width:100%;padding:12px;border:2px solid #E5E7EB;border-radius:10px;font-size:14px;resize:vertical;min-height:80px;margin-top:10px}
+.reason-input:focus{border-color:var(--coral)}
+
+.video-preview{width:100%;border-radius:12px;max-height:200px;object-fit:cover;margin-top:8px}
+.ad-video{width:100%;max-height:240px;border-radius:12px;object-fit:cover}
+</style>
+</head>
+<body>
+
+<!-- NOTIFICATION -->
+<div id="notif" class="notif"></div>
+
+<!-- AUTH PAGE -->
+<div id="authPage" class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo">🐾 PetGO</div>
+    <div class="auth-tagline">Знайди найкращого доглядача для свого улюбленця</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuth('login')">Увійти</button>
+      <button class="auth-tab" onclick="switchAuth('register')">Реєстрація</button>
+    </div>
+    <div id="authError" class="auth-error" style="display:none"></div>
+    <div id="loginForm">
+      <div class="form-group"><label>Нікнейм</label><input class="form-input" id="loginNick" placeholder="your_nickname" autocomplete="username"/></div>
+      <div class="form-group"><label>Пароль</label><input class="form-input" type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password"/></div>
+      <button class="btn-primary" onclick="doLogin()">Увійти</button>
+    </div>
+    <div id="registerForm" style="display:none">
+      <div class="form-group"><label>Нікнейм</label><input class="form-input" id="regNick" placeholder="your_nickname" autocomplete="username"/></div>
+      <div class="form-group"><label>Пароль</label><input class="form-input" type="password" id="regPass" placeholder="Мінімум 6 символів" autocomplete="new-password"/></div>
+      <div class="form-group"><label>Підтвердити пароль</label><input class="form-input" type="password" id="regPass2" placeholder="Повторіть пароль" autocomplete="new-password"/></div>
+      <button class="btn-primary" onclick="doRegister()">Зареєструватись</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" style="display:none">
+  <nav>
+    <div class="nav-inner">
+      <div class="logo" onclick="goTab('listings')">🐾 <span>Pet</span>GO</div>
+      <div class="nav-tabs">
+        <button class="nav-tab active" data-tab="listings" onclick="goTab('listings')">🏠 Оголошення</button>
+        <button class="nav-tab" data-tab="chats" onclick="goTab('chats')">💬 Чати</button>
+        <button class="nav-tab" data-tab="mylistings" onclick="goTab('mylistings')">📋 Мої оголошення</button>
+        <button class="nav-tab" data-tab="ads" onclick="goTab('ads')">📢 Реклама</button>
+        <button class="nav-tab admin-tab" data-tab="admin" onclick="goTab('admin')" style="display:none">🛡️ Адмін</button>
+      </div>
+      <div class="nav-user">
+        <span class="nav-username" id="navUsername"></span>
+        <button class="btn-logout" onclick="doLogout()">Вийти</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- LISTINGS TAB -->
+  <div id="tabListings" class="page active">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:8px">
+      <div>
+        <h2 class="section-title">Оголошення 🐾</h2>
+        <p class="section-sub">Знайди доглядача для свого улюбленця</p>
+      </div>
+      <button class="btn-primary" style="width:auto;padding:12px 24px" onclick="openCreateModal()">+ Створити оголошення</button>
+    </div>
+    <div class="filters-wrap">
+      <div class="search-bar"><input class="search-input" id="searchInput" placeholder="🔍 Пошук за назвою або породою..." oninput="applyFilters()"/></div>
+      <div class="filters-row" id="filterBtns">
+        <button class="filter-btn active" data-filter="all" onclick="setFilter('all',this)">Всі</button>
+        <button class="filter-btn" data-filter="new" onclick="setFilter('new',this)">🆕 Нові</button>
+        <button class="filter-btn" data-filter="good" onclick="setFilter('good',this)">⭐ Добрі оцінки</button>
+        <button class="filter-btn" data-filter="bad" onclick="setFilter('bad',this)">👎 Погані оцінки</button>
+        <button class="filter-btn" data-filter="dog" onclick="setFilter('dog',this)">🐶 Собака</button>
+        <button class="filter-btn" data-filter="cat" onclick="setFilter('cat',this)">🐱 Кіт</button>
+        <button class="filter-btn" data-filter="dog_good" onclick="setFilter('dog_good',this)">🐶⭐ Собака+</button>
+        <button class="filter-btn" data-filter="dog_bad" onclick="setFilter('dog_bad',this)">🐶👎 Собака-</button>
+        <button class="filter-btn" data-filter="cat_good" onclick="setFilter('cat_good',this)">🐱⭐ Кіт+</button>
+        <button class="filter-btn" data-filter="cat_bad" onclick="setFilter('cat_bad',this)">🐱👎 Кіт-</button>
+        <button class="filter-btn" data-filter="price_high" onclick="setFilter('price_high',this)">💰 Висока ціна</button>
+        <button class="filter-btn" data-filter="price_low" onclick="setFilter('price_low',this)">🪙 Низька ціна</button>
+      </div>
+    </div>
+    <div class="cards-grid" id="listingsGrid"></div>
+    <div id="listingsEmpty" class="empty-state" style="display:none"><div class="icon">🐾</div><h3>Оголошень не знайдено</h3><p>Спробуй інші фільтри або будь першим!</p></div>
+  </div>
+
+  <!-- CHATS TAB -->
+  <div id="tabChats" class="page">
+    <h2 class="section-title">Повідомлення 💬</h2>
+    <p class="section-sub" style="margin-bottom:24px">Твої розмови з власниками</p>
+    <div id="chatListView">
+      <div class="chat-list" id="chatList"></div>
+      <div id="chatListEmpty" class="empty-state" style="display:none"><div class="icon">💬</div><h3>Поки немає чатів</h3><p>Знайди оголошення і напиши власнику</p></div>
+    </div>
+    <div id="chatWindowView" style="display:none">
+      <div class="chat-window">
+        <div class="chat-header">
+          <button class="chat-back" onclick="closeChatWindow()">←</button>
+          <div><div class="chat-header-title" id="chatHeaderTitle"></div><div style="font-size:12px;color:var(--gray)" id="chatHeaderSub"></div></div>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-row">
+          <input class="chat-input" id="chatInput" placeholder="Написати повідомлення..." onkeydown="if(event.key==='Enter')sendMsg()"/>
+          <button class="btn-send" onclick="sendMsg()">Надіслати</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MY LISTINGS -->
+  <div id="tabMylistings" class="page">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:24px">
+      <div><h2 class="section-title">Мої оголошення 📋</h2><p class="section-sub">Керуй своїми пропозиціями</p></div>
+      <button class="btn-primary" style="width:auto;padding:12px 24px" onclick="openCreateModal()">+ Нове оголошення</button>
+    </div>
+    <div id="myListingsContainer"></div>
+    <div id="myListingsEmpty" class="empty-state" style="display:none"><div class="icon">📋</div><h3>Ти ще не створив оголошень</h3><p>Створи своє перше оголошення!</p></div>
+  </div>
+
+  <!-- ADS TAB -->
+  <div id="tabAds" class="page">
+    <h2 class="section-title">Реклама 📢</h2>
+    <p class="section-sub" style="margin-bottom:24px">Цікаві пропозиції для тебе та твого улюбленця</p>
+    <div class="order-ad-banner">
+      <h3>Хочеш розмістити рекламу?</h3>
+      <p>Розкажи про свій бізнес тисячам власників тварин</p>
+      <a href="https://t.me/youtuber_simdom" target="_blank" class="btn-tg">📨 Замовити рекламу</a>
+    </div>
+    <div id="adminAddAd" style="display:none">
+      <div class="admin-section">
+        <h3>+ Додати рекламу (Адмін)</h3>
+        <div class="form-row">
+          <div class="form-group"><label>Назва реклами</label><input class="form-input" id="adTitle" placeholder="Назва"/></div>
+          <div class="form-group"><label>Тип</label>
+            <select class="form-select" id="adType" onchange="toggleAdType()">
+              <option value="link">Посилання (фото + лінк)</option>
+              <option value="media">Медіа (фото/відео + опис)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label>Опис</label><textarea class="form-input" id="adDesc" rows="2" placeholder="Опис..."></textarea></div>
+        <div class="form-group" id="adLinkGroup"><label>Посилання (URL)</label><input class="form-input" id="adLink" placeholder="https://..."/></div>
+        <div class="form-group"><label>Фото (до 10) або відео (до 40 сек)</label>
+          <div class="photo-upload-area" onclick="document.getElementById('adFiles').click()">
+            <div style="font-size:32px">📸</div>
+            <div style="font-size:14px;color:var(--gray);margin-top:6px">Натисни щоб обрати photo/відео</div>
+            <input type="file" id="adFiles" multiple accept="image/*,video/*" onchange="previewAdFiles(event)"/>
+          </div>
+          <div class="photo-preview-grid" id="adPreviewGrid"></div>
+        </div>
+        <button class="btn-primary" style="width:auto;padding:12px 28px" onclick="addAd()">Опублікувати рекламу</button>
+      </div>
+    </div>
+    <div class="cards-grid" id="adsGrid"></div>
+    <div id="adsEmpty" class="empty-state" style="display:none"><div class="icon">📢</div><h3>Реклами ще немає</h3><p>Адмін скоро додасть цікаві пропозиції</p></div>
+  </div>
+
+  <!-- ADMIN TAB -->
+  <div id="tabAdmin" class="page">
+    <h2 class="section-title">🛡️ Адмін панель</h2>
+    <p class="section-sub" style="margin-bottom:24px">Модерація контенту платформи</p>
+    <div class="admin-section">
+      <h3>📋 Всі оголошення</h3>
+      <div id="adminListingsList"></div>
+    </div>
+    <div class="admin-section">
+      <h3>👥 Користувачі</h3>
+      <div id="adminUsersList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CREATE LISTING MODAL -->
+<div class="modal-overlay" id="createModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Нове оголошення 🐾</div>
+      <button class="modal-close" onclick="closeModal('createModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label>Назва послуги *</label><input class="form-input" id="newTitle" placeholder="Наприклад: Вигул собаки"/></div>
+        <div class="form-group"><label>Тип тварини *</label>
+          <select class="form-select" id="newPetType">
+            <option value="">Оберіть...</option>
+            <option value="dog">🐶 Собака</option>
+            <option value="cat">🐱 Кіт</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Порода *</label><input class="form-input" id="newBreed" placeholder="Наприклад: Лабрадор"/></div>
+        <div class="form-group"><label>Ціна (грн/год) *</label><input class="form-input" type="number" id="newPrice" placeholder="150"/></div>
+      </div>
+      <div class="form-group form-group-full"><label>Опис (необов'язково)</label><textarea class="form-input" id="newDesc" rows="3" placeholder="Розкажи про свої послуги..."></textarea></div>
+      <div class="form-group form-group-full">
+        <label>Фото (1 обов'язкова, максимум 6) *</label>
+        <div class="photo-upload-area" onclick="document.getElementById('photoInput').click()">
+          <div style="font-size:36px">📷</div>
+          <div style="font-size:14px;color:var(--gray);margin-top:8px">Натисни щоб завантажити фото</div>
+          <p class="photo-required-note">Формати: JPG, PNG, WEBP</p>
+          <input type="file" id="photoInput" multiple accept="image/*" onchange="previewPhotos(event)"/>
+        </div>
+        <div class="photo-preview-grid" id="photoPreviewGrid"></div>
+      </div>
+      <button class="btn-primary" onclick="createListing()">Опублікувати оголошення</button>
+    </div>
+  </div>
+</div>
+
+<!-- LISTING DETAIL MODAL -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal" style="max-width:680px">
+    <div class="modal-header">
+      <div class="modal-title" id="detailTitle"></div>
+      <button class="modal-close" onclick="closeModal('detailModal')">×</button>
+    </div>
+    <div class="modal-body" id="detailBody"></div>
+  </div>
+</div>
+
+<!-- ADMIN STRIKE MODAL -->
+<div class="modal-overlay" id="strikeModal">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header">
+      <div class="modal-title">⚠️ Видати страйк</div>
+      <button class="modal-close" onclick="closeModal('strikeModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:15px;margin-bottom:12px">Оголошення: <b id="strikeListingTitle"></b></p>
+      <p style="font-size:13px;color:var(--gray);margin-bottom:4px">Причина (необов'язково):</p>
+      <textarea class="reason-input" id="strikeReason" placeholder="Наприклад: Порушення правил платформи..."></textarea>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="btn-primary" style="flex:1" onclick="confirmStrike()">Видати страйк</button>
+        <button class="btn-sm btn-danger" style="flex:1;padding:12px" onclick="closeModal('strikeModal')">Скасувати</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, get, push, onValue, update, remove, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+// ВИПРАВЛЕНО ТУТ: Повернуто твою оригінальну та повністю робочу конфігурацію Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyCtseHvC1ZyCSDaZdxjCGfCdn6Iu_T3s_I",
+  authDomain: "petgo-49f8f.firebaseapp.com",
+  databaseURL: "https://petgo-49f8f-default-rtdb.firebaseio.com/",
+  projectId: "petgo-49f8f",
+  storageBucket: "petgo-49f8f.firebasestorage.app",
+  messagingSenderId: "208872589653",
+  appId: "1:208872589653:web:8eeb9a2ebccaf2f3fd07dc",
+  measurementId: "G-10102KMSGE"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// ─── STATE ─────────────────────────────────────────────────────────────────
+let currentUser = null;
+let allListings = {};
+let allUsers = {};
+let allAds = {};
+let allReviews = {};
+let allChats = {};
+let currentFilter = 'all';
+let currentChatId = null;
+let pendingStrikeListingId = null;
+let newPhotos = []; // base64 array
+let adFiles = [];   // base64 array
+let photoLimitReached = false;
+
+// ─── UTILS ─────────────────────────────────────────────────────────────────
+window.showNotif = function(msg, type=''){
+  const n = document.getElementById('notif');
+  n.textContent = msg;
+  n.className = 'notif show' + (type ? ' '+type : '');
+  setTimeout(()=>{ n.className='notif'; }, 3000);
+};
+
+function fmtDate(ts){
+  if(!ts) return '';
+  const d = new Date(ts);
+  return d.toLocaleDateString('uk-UA',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+}
+
+function avgRating(reviews){
+  const arr = Object.values(reviews||{});
+  if(!arr.length) return 0;
+  return arr.reduce((a,r)=>a+r.rating,0)/arr.length;
+}
+
+function starsHtml(rating, total=0){
+  let s='<div class="stars">';
+  for(let i=1;i<=5;i++) s+=`<span class="star${i<=Math.round(rating)?'':' empty'}">★</span>`;
+  if(total) s+=`<span class="star-count">(${total})</span>`;
+  s+='</div>';
+  return s;
+}
+
+function toBase64(file){ return new Promise(res=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.readAsDataURL(file); }); }
+
+// ─── AUTH ──────────────────────────────────────────────────────────────────
+window.switchAuth = function(mode){
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',i===(mode==='login'?0:1)));
+  document.getElementById('loginForm').style.display = mode==='login'?'':'none';
+  document.getElementById('registerForm').style.display = mode==='register'?'':'none';
+  document.getElementById('authError').style.display='none';
+};
+
+window.doLogin = async function(){
+  const nick = document.getElementById('loginNick').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  if(!nick||!pass){ showAuthErr('Заповни всі поля'); return; }
+  const snap = await get(ref(db,'users/'+nick));
+  if(!snap.exists()){ showAuthErr('Користувача не знайдено'); return; }
+  const user = snap.val();
+  if(user.password !== pass){ showAuthErr('Невірний пароль'); return; }
+  if(user.banned){ showAuthErr('Акаунт заблоковано'); return; }
+  loginSuccess(nick, user);
+};
+
+window.doRegister = async function(){
+  const nick = document.getElementById('regNick').value.trim();
+  const pass = document.getElementById('regPass').value;
+  const pass2 = document.getElementById('regPass2').value;
+  if(!nick||!pass||!pass2){ showAuthErr('Заповни всі поля'); return; }
+  if(nick.length < 2){ showAuthErr('Нікнейм мінімум 2 символи'); return; }
+  if(/\s/.test(nick)){ showAuthErr('Нікнейм не може містити пробіли'); return; }
+  if(pass.length < 6){ showAuthErr('Пароль мінімум 6 символів'); return; }
+  if(pass !== pass2){ showAuthErr('Паролі не співпадають'); return; }
+  
+  const snap = await get(ref(db,'users/'+nick));
+  if(snap.exists()){ showAuthErr('Цей нікнейм вже зайнятий'); return; }
+  await set(ref(db,'users/'+nick),{ password: pass, createdAt: Date.now(), banned: false });
+  loginSuccess(nick, { password: pass, banned: false });
+};
+
+function showAuthErr(msg){
+  const e=document.getElementById('authError'); e.textContent=msg; e.style.display='block';
+}
+
+function loginSuccess(nick, userData){
+  currentUser = { nick, ...userData };
+  document.getElementById('authPage').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('navUsername').textContent = '👤 '+nick;
+  if(nick==='simdom') document.querySelector('.admin-tab').style.display='flex';
+  if(nick==='simdom') document.getElementById('adminAddAd').style.display='block';
+  loadAll();
+  goTab('listings');
+}
+
+window.doLogout = function(){
+  currentUser=null; allListings={}; allUsers={}; allChats={};
+  document.getElementById('app').style.display='none';
+  document.getElementById('authPage').style.display='flex';
+  document.querySelector('.admin-tab').style.display='none';
+  document.getElementById('adminAddAd').style.display='none';
+};
+
+// ─── LOAD DATA ─────────────────────────────────────────────────────────────
+function loadAll(){
+  onValue(ref(db,'listings'), snap=>{ allListings = snap.val()||{}; renderListings(); renderMyListings(); if(currentUser?.nick==='simdom') renderAdmin(); });
+  onValue(ref(db,'users'), snap=>{ allUsers = snap.val()||{}; if(currentUser?.nick==='simdom') renderAdmin(); });
+  onValue(ref(db,'ads'), snap=>{ allAds = snap.val()||{}; renderAds(); });
+  onValue(ref(db,'reviews'), snap=>{ allReviews = snap.val()||{}; renderListings(); renderMyListings(); });
+  onValue(ref(db,'chats'), snap=>{ allChats = snap.val()||{}; renderChatList(); if(currentChatId) renderChatMessages(); });
+}
+
+// ─── TAB NAVIGATION ────────────────────────────────────────────────────────
+window.goTab = function(tab){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  document.getElementById('tab'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active');
+  if(tab==='chats') closeChatWindow();
+};
+
+// ─── LISTINGS ─────────────────────────────────────────────────────────────
+let currentFilterVal='all';
+window.setFilter = function(f, btn){
+  currentFilterVal=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+};
+window.applyFilters = function(){ renderListings(); };
+
+function getFilteredListings(){
+  const search = document.getElementById('searchInput')?.value.toLowerCase()||'';
+  let list = Object.entries(allListings).filter(([id,l])=>!l.frozen && !l.deleted);
+  const f = currentFilterVal;
+  if(f==='new') list.sort((a,b)=>b[1].createdAt-a[1].createdAt);
+  if(f==='good') list = list.filter(([id])=>avgRating(allReviews[id])>=4).sort((a,b)=>avgRating(allReviews[b[0]])-avgRating(allReviews[a[0]]));
+  if(f==='bad') list = list.filter(([id])=>{ const r=avgRating(allReviews[id]); return r>0&&r<3; });
+  if(f==='dog') list = list.filter(([,l])=>l.petType==='dog');
+  if(f==='cat') list = list.filter(([,l])=>l.petType==='cat');
+  if(f==='dog_good') list = list.filter(([id,l])=>l.petType==='dog'&&avgRating(allReviews[id])>=4);
+  if(f==='dog_bad') list = list.filter(([id,l])=>l.petType==='dog'&&avgRating(allReviews[id])>0&&avgRating(allReviews[id])<3);
+  if(f==='cat_good') list = list.filter(([id,l])=>l.petType==='cat'&&avgRating(allReviews[id])>=4);
+  if(f==='cat_bad') list = list.filter(([id,l])=>l.petType==='cat'&&avgRating(allReviews[id])>0&&avgRating(allReviews[id])<3);
+  if(f==='price_high') list.sort((a,b)=>b[1].price-a[1].price);
+  if(f==='price_low') list.sort((a,b)=>a[1].price-b[1].price);
+  if(search) list = list.filter(([,l])=>(l.title||'').toLowerCase().includes(search)||(l.breed||'').toLowerCase().includes(search));
+  return list;
+}
+
+function renderListings(){
+  const grid = document.getElementById('listingsGrid');
+  const empty = document.getElementById('listingsEmpty');
+  const list = getFilteredListings();
+  if(!list.length){ grid.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  grid.innerHTML = list.map(([id,l])=>listingCardHtml(id,l)).join('');
+}
+
+function listingCardHtml(id, l){
+  const reviews = allReviews[id]||{};
+  const avg = avgRating(reviews); const cnt = Object.keys(reviews).length;
+  const img = l.photos?.[0] ? `<img src="${l.photos[0]}" alt="pet"/>` : `<div class="card-img-placeholder">${l.petType==='dog'?'🐶':'🐱'}</div>`;
+  const strikeCount = l.strikes||0;
+  return `<div class="listing-card" onclick="openDetail('${id}')">
+    <div class="card-img-wrap">${img}${strikeCount>0?`<div class="strike-badge">⚠️ ${strikeCount} страйк${strikeCount>1?'и':''}</div>`:''}</div>
+    <div class="card-body">
+      <div class="card-pet-type ${l.petType}">${l.petType==='dog'?'🐶 Собака':'🐱 Кіт'}</div>
+      <div class="card-title">${l.title||''}</div>
+      <div class="card-breed">${l.breed||''}</div>
+      <div class="card-footer">
+        <div class="card-price">${l.price||0} <span>грн/год</span></div>
+        ${starsHtml(avg,cnt)}
+      </div>
+    </div>
+  </div>`;
+}
+
+window.openDetail = function(id){
+  const l = allListings[id]; if(!l||l.deleted) return;
+  document.getElementById('detailTitle').textContent = (l.petType==='dog'?'🐶 ':'🐱 ')+(l.title||'');
+  const reviews = allReviews[id]||{};
+  const avg = avgRating(reviews); const cnt = Object.keys(reviews).length;
+  const isOwner = currentUser.nick === l.owner;
+  const photos = l.photos||[];
+  let gallery = '';
+  if(photos.length){
+    gallery += `<div class="gallery-main"><img src="${photos[0]}" alt="main" id="galleryMain"/></div>`;
+    if(photos.length>1) gallery += `<div class="gallery">${photos.map((p,i)=>`<img src="${p}" onclick="document.getElementById('galleryMain').src='${p}'" alt="p${i}"/>`).join('')}</div>`;
+  }
+  const canReview = !isOwner && !Object.keys(reviews).find(k=>reviews[k].author===currentUser.nick);
+  let reviewForm = canReview ? `
+    <div class="review-form">
+      <div style="font-weight:700;font-size:15px;margin-bottom:10px">Залишити відгук</div>
+      <div class="stars-pick" id="starsPick_${id}">
+        ${[1,2,3,4,5].map(i=>`<span data-star="${i}" onclick="pickStar('${id}',${i})">★</span>`).join('')}
+      </div>
+      <textarea class="form-input" id="reviewText_${id}" rows="2" placeholder="Твій відгук..."></textarea>
+      <button class="btn-primary" style="margin-top:10px;width:auto;padding:10px 24px" onclick="submitReview('${id}')">Надіслати відгук</button>
+    </div>` : '';
+  const reviewsList = Object.entries(reviews).map(([rid,r])=>`
+    <div class="review-item">
+      <div class="review-top"><span class="review-author">@${r.author}</span>${starsHtml(r.rating)}</div>
+      <div class="review-text">${r.text||''}</div>
+      <div style="font-size:11px;color:var(--gray);margin-top:4px">${fmtDate(r.createdAt)}</div>
+    </div>`).join('');
+  document.getElementById('detailBody').innerHTML = `
+    ${gallery}
+    <div class="detail-meta">
+      <div class="detail-meta-item"><b>${l.petType==='dog'?'🐶 Собака':'🐱 Кіт'}</b></div>
+      <div class="detail-meta-item">Порода: <b>${l.breed||''}</b></div>
+      <div class="detail-meta-item">Власник: <b>@${l.owner||''}</b></div>
+      ${avg>0?`<div class="detail-meta-item">${starsHtml(avg,cnt)}</div>`:''}
+    </div>
+    <div class="listing-detail-price">${l.price||0} грн/год</div>
+    ${l.desc?`<div class="listing-detail-desc">${l.desc}</div>`:''}
+    ${!isOwner?`<button class="btn-primary" style="width:auto;padding:12px 28px;margin-bottom:8px" onclick="startChat('${id}','${l.owner}')">💬 Написати власнику</button>`:''}
+    <div class="reviews-section">
+      <div style="font-size:17px;font-weight:800;font-family:'Nunito',sans-serif;margin-bottom:14px">Відгуки (${cnt})</div>
+      ${reviewForm}${reviewsList||'<p style="color:var(--gray);font-size:14px">Відгуків поки немає</p>'}
+    </div>`;
+  document.getElementById('detailModal').classList.add('open');
+};
+
+// ─── REVIEWS ───────────────────────────────────────────────────────────────
+const pickedStars = {};
+window.pickStar = function(id, n){
+  pickedStars[id]=n;
+  const picks = document.querySelectorAll(`#starsPick_${id} span`);
+  picks.forEach(s=>s.classList.toggle('lit',parseInt(s.dataset.star)<=n));
+};
+
+window.submitReview = async function(id){
+  const rating = pickedStars[id]||0;
+  if(!rating){ showNotif('Обери оцінку зірками','error'); return; }
+  const text = document.getElementById('reviewText_'+id)?.value.trim()||'';
+  await push(ref(db,'reviews/'+id), { author: currentUser.nick, rating, text, createdAt: Date.now() });
+  showNotif('Відгук додано!','success');
+  closeModal('detailModal');
+};
+
+// ─── CHATS ─────────────────────────────────────────────────────────────────
+window.startChat = async function(listingId, ownerNick){
+  if(ownerNick===currentUser.nick){ showNotif('Це твоє власне оголошення','error'); return; }
+  const chatId = [currentUser.nick, ownerNick, listingId].sort().join('_');
+  const listing = allListings[listingId];
+  const snap = await get(ref(db,'chats/'+chatId));
+  if(!snap.exists()){
+    await set(ref(db,'chats/'+chatId),{ participants:[currentUser.nick,ownerNick], listingId, listingTitle: listing?.title||'', createdAt: Date.now(), messages:{} });
+  }
+  closeModal('detailModal');
+  goTab('chats');
+  openChatWindow(chatId);
+};
+
+function renderChatList(){
+  const list = document.getElementById('chatList');
+  const empty = document.getElementById('chatListEmpty');
+  const myChats = Object.entries(allChats).filter(([,c])=>c.participants&&c.participants.includes(currentUser.nick));
+  if(!myChats.length){ list.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  list.innerHTML = myChats.map(([id,c])=>{
+    const msgs = Object.values(c.messages||{});
+    const last = msgs[msgs.length-1];
+    const other = (c.participants||[]).find(p=>p!==currentUser.nick)||'';
+    const unread = msgs.filter(m=>m.author!==currentUser.nick&&!m.read).length;
+    return `<div class="chat-item" onclick="openChatWindow('${id}')">
+      <div class="chat-item-info">
+        <div class="chat-item-title">💬 ${c.listingTitle||'Чат'} <span style="font-size:12px;color:var(--gray)">з @${other}</span></div>
+        <div class="chat-item-preview">${last?last.text.slice(0,50)+'...':'Почни розмову'}</div>
+      </div>
+      ${unread?`<div class="chat-unread">${unread}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+window.openChatWindow = function(chatId){
+  currentChatId = chatId;
+  const c = allChats[chatId]; if(!c) return;
+  const other = (c.participants||[]).find(p=>p!==currentUser.nick)||'';
+  document.getElementById('chatHeaderTitle').textContent = c.listingTitle||'Чат';
+  document.getElementById('chatHeaderSub').textContent = 'з @'+other;
+  document.getElementById('chatListView').style.display='none';
+  document.getElementById('chatWindowView').style.display='block';
+  renderChatMessages();
+  const msgs = c.messages||{};
+  Object.entries(msgs).forEach(([mid,m])=>{ if(m.author!==currentUser.nick&&!m.read) update(ref(db,'chats/'+chatId+'/messages/'+mid),{read:true}); });
+};
+
+window.closeChatWindow = function(){
+  currentChatId=null;
+  document.getElementById('chatListView').style.display='block';
+  document.getElementById('chatWindowView').style.display='none';
+};
+
+function renderChatMessages(){
+  if(!currentChatId) return;
+  const c = allChats[currentChatId]; if(!c) return;
+  const msgs = Object.values(c.messages||{}).sort((a,b)=>a.createdAt-b.createdAt);
+  const container = document.getElementById('chatMessages');
+  container.innerHTML = msgs.map(m=>`
+    <div class="msg ${m.author===currentUser.nick?'mine':'theirs'}">
+      ${m.text}
+      <div class="msg-meta">${m.author===currentUser.nick?'Ти':'@'+m.author} · ${fmtDate(m.createdAt)}</div>
+    </div>`).join('');
+  container.scrollTop = container.scrollHeight;
+}
+
+window.sendMsg = async function(){
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if(!text||!currentChatId) return;
+  await push(ref(db,'chats/'+currentChatId+'/messages'), { author: currentUser.nick, text, createdAt: Date.now(), read:false });
+  input.value='';
+};
+
+// ─── MY LISTINGS ───────────────────────────────────────────────────────────
+function renderMyListings(){
+  if(!currentUser) return;
+  const container = document.getElementById('myListingsContainer');
+  const empty = document.getElementById('myListingsEmpty');
+  const mine = Object.entries(allListings).filter(([,l])=>l.owner===currentUser.nick&&!l.deleted);
+  if(!mine.length){ container.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  container.innerHTML = mine.map(([id,l])=>{
+    const reviews = allReviews[id]||{}; const avg = avgRating(reviews); const cnt = Object.keys(reviews).length;
+    const img = l.photos?.[0];
+    const strikes = l.strikes||0;
+    return `<div class="my-listing-card">
+      ${img?`<img class="my-listing-img" src="${img}" alt="pet"/>`:`<div class="my-listing-img">${l.petType==='dog'?'🐶':'🐱'}</div>`}
+      <div class="my-listing-info">
+        <div class="my-listing-title">${l.title}${l.frozen?'<span class="frozen-badge">❄️ Заморожено</span>':''}</div>
+        <div class="my-listing-meta">${l.petType==='dog'?'🐶':'🐱'} ${l.breed} · ${l.price} грн/год · ${starsHtml(avg,cnt)}</div>
+        ${strikes>0?`<div style="font-size:13px;color:var(--red);margin-bottom:6px">⚠️ ${strikes} страйк${strikes>1?'и':''}</div>`:''}
+        ${l.strikeReason?`<div style="font-size:12px;color:var(--gray);background:var(--light);padding:6px 10px;border-radius:8px;margin-bottom:8px">Причина: ${l.strikeReason}</div>`:''}
+        <div class="my-listing-actions">
+          ${l.frozen
+            ?`<button class="btn-sm btn-success" onclick="toggleFreeze('${id}',false)">▶ Розморозити</button>`
+            :`<button class="btn-sm btn-warning" onclick="toggleFreeze('${id}',true)">❄️ Заморозити</button>`}
+          <button class="btn-sm btn-danger" onclick="deleteListing('${id}')">🗑 Видалити</button>
+          <button class="btn-sm btn-info" onclick="openDetail('${id}')">👁 Переглянути</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.toggleFreeze = async function(id, freeze){
+  await update(ref(db,'listings/'+id), { frozen: freeze });
+  showNotif(freeze?'Оголошення заморожено ❄️':'Оголошення розморожено ▶','success');
+};
+
+window.deleteListing = async function(id){
+  if(!confirm('Видалити оголошення назавжди?')) return;
+  await update(ref(db,'listings/'+id), { deleted: true });
+  showNotif('Оголошення видалено','success');
+};
+
+// ─── CREATE LISTING ─────────────────────────────────────────────────────────
+window.openCreateModal = function(){
+  newPhotos=[];
+  document.getElementById('photoPreviewGrid').innerHTML='';
+  document.getElementById('newTitle').value='';
+  document.getElementById('newBreed').value='';
+  document.getElementById('newPrice').value='';
+  document.getElementById('newDesc').value='';
+  document.getElementById('newPetType').value='';
+  document.getElementById('createModal').classList.add('open');
+};
+
+window.previewPhotos = async function(e){
+  const files = Array.from(e.target.files).slice(0, 6-newPhotos.length);
+  for(const f of files){
+    if(newPhotos.length>=6){ showNotif('Максимум 6 foto','error'); break; }
+    const b64 = await toBase64(f);
+    newPhotos.push(b64);
+  }
+  renderPhotoPreview();
+};
+
+function renderPhotoPreview(){
+  document.getElementById('photoPreviewGrid').innerHTML = newPhotos.map((p,i)=>`
+    <div class="photo-preview-item">
+      <img src="${p}"/>
+      <button class="photo-remove" onclick="removePhoto(${i})">×</button>
+    </div>`).join('');
+}
+
+window.removePhoto = function(i){ newPhotos.splice(i,1); renderPhotoPreview(); };
+
+window.createListing = async function(){
+  const title=document.getElementById('newTitle').value.trim();
+  const petType=document.getElementById('newPetType').value;
+  const breed=document.getElementById('newBreed').value.trim();
+  const price=parseFloat(document.getElementById('newPrice').value);
+  const desc=document.getElementById('newDesc').value.trim();
+  if(!title||!petType||!breed||!price){ showNotif('Заповни всі обов\'язкові поля','error'); return; }
+  if(!newPhotos.length){ showNotif('Додай хоча б одне фото','error'); return; }
+  await push(ref(db,'listings'),{ title,petType,breed,price,desc,photos:newPhotos,owner:currentUser.nick,createdAt:Date.now(),frozen:false,deleted:false,strikes:0 });
+  closeModal('createModal');
+  showNotif('Оголошення опубліковано!','success');
+  goTab('mylistings');
+};
+
+// ─── ADS ────────────────────────────────────────────────────────────────────
+window.toggleAdType = function(){
+  const t=document.getElementById('adType').value;
+  document.getElementById('adLinkGroup').style.display=t==='link'?'':'none';
+};
+
+window.previewAdFiles = async function(e){
+  const files = Array.from(e.target.files).slice(0, 10);
+  adFiles=[];
+  for(const f of files){
+    const b64 = await toBase64(f);
+    adFiles.push({ b64, type: f.type.startsWith('video')?'video':'image' });
+  }
+  const grid = document.getElementById('adPreviewGrid');
+  grid.innerHTML = adFiles.map((f,i)=>
+    f.type==='video'
+      ? `<video src="${f.b64}" class="video-preview" controls style="width:90px;height:70px;object-fit:cover;border-radius:8px"></video>`
+      : `<div class="photo-preview-item"><img src="${f.b64}"/></div>`
+  ).join('');
+};
+
+window.addAd = async function(){
+  const title=document.getElementById('adTitle').value.trim();
+  const type=document.getElementById('adType').value;
+  const desc=document.getElementById('adDesc').value.trim();
+  const link=document.getElementById('adLink').value.trim();
+  if(!title){ showNotif('Вкажи назву реклами','error'); return; }
+  await push(ref(db,'ads'),{ title, type, desc, link, files: adFiles.map(f=>f.b64), fileTypes: adFiles.map(f=>f.type), createdAt:Date.now() });
+  adFiles=[];
+  document.getElementById('adPreviewGrid').innerHTML='';
+  document.getElementById('adTitle').value='';
+  document.getElementById('adDesc').value='';
+  document.getElementById('adLink').value='';
+  showNotif('Рекламу додано!','success');
+};
+
+function renderAds(){
+  const grid=document.getElementById('adsGrid');
+  const empty=document.getElementById('adsEmpty');
+  const list=Object.entries(allAds||{});
+  if(!list.length){ grid.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  grid.innerHTML=list.map(([id,a])=>{
+    const firstImg = (a.files||[]).find((_,i)=>(a.fileTypes||[])[i]==='image');
+    const firstVid = (a.files||[]).find((_,i)=>(a.fileTypes||[])[i]==='video');
+    const mediaHtml = firstVid
+      ? `<video src="${firstVid}" class="ad-video" autoplay muted loop playsinline></video>`
+      : firstImg ? `<img class="ad-img" src="${firstImg}" alt="ad"/>`
+      : `<div class="ad-img-placeholder">📢</div>`;
+    return `<div class="ad-card" ${a.link?`onclick="window.open('${a.link}','_blank')" style="cursor:pointer"`:''}>
+      ${mediaHtml}
+      <div class="ad-body">
+        <div class="ad-card-title">${a.title}</div>
+        ${a.desc?`<div class="ad-card-desc">${a.desc}</div>`:''}
+        ${a.link?`<a href="${a.link}" target="_blank" class="btn-ad-link" onclick="event.stopPropagation()">Перейти →</a>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─── ADMIN ──────────────────────────────────────────────────────────────────
+function renderAdmin(){
+  if(currentUser?.nick!=='simdom') return;
+  const allList = Object.entries(allListings).filter(([,l])=>!l.deleted);
+  document.getElementById('adminListingsList').innerHTML = allList.length
+    ? allList.map(([id,l])=>{
+        const strikes=l.strikes||0;
+        return `<div class="admin-listing-row">
+          <div class="admin-listing-info">
+            <div class="admin-listing-title">${l.title} <span style="font-size:12px;color:var(--gray)">@${l.owner}</span></div>
+            <div class="admin-listing-meta">${l.petType==='dog'?'🐶':'🐱'} ${l.breed} · ${l.price} грн/год ${l.frozen?'· ❄️':''}</div>
+            ${strikes>0?`<div class="admin-strike-count">⚠️ Страйки: ${strikes}</div>`:''}
+            ${l.strikeReason?`<div style="font-size:12px;color:var(--gray)">Причина: ${l.strikeReason}</div>`:''}
+          </div>
+          <div class="admin-actions">
+            <button class="btn-sm btn-warning" onclick="adminStrike('${id}')">⚠️ Страйк</button>
+            <button class="btn-sm btn-danger" onclick="adminDeleteListing('${id}')">🗑 Видалити</button>
+          </div>
+        </div>`;
+      }).join('')
+    : '<p style="color:var(--gray);font-size:14px">Немає оголошень</p>';
+
+  const users = Object.entries(allUsers).filter(([n])=>n!=='simdom');
+  document.getElementById('adminUsersList').innerHTML = users.length
+    ? users.map(([nick,u])=>`
+        <div class="admin-listing-row">
+          <div class="admin-listing-info">
+            <div class="admin-listing-title">@${nick}</div>
+            <div class="admin-listing-meta">Зареєстрований: ${fmtDate(u.createdAt)} ${u.banned?'· 🚫 Заблокований':''}</div>
+            ${getTotalStrikes(nick)>=4?`<div style="font-size:13px;color:var(--red);font-weight:700">⚠️ 4+ страйки — доступні дії!</div>`:''}
+          </div>
+          <div class="admin-actions">
+            ${getTotalStrikes(nick)>=4 ? (u.banned
+              ? `<button class="btn-sm btn-success" onclick="adminUnban('${nick}')">✅ Розблокувати</button>`
+              : `<button class="btn-sm btn-danger" onclick="adminBan('${nick}')">🚫 Заблокувати</button><button class="btn-sm btn-danger" onclick="adminDeleteUser('${nick}')">🗑 Видалити акаунт</button>`)
+              : ''}
+          </div>
+        </div>`).join('')
+    : '<p style="color:var(--gray);font-size:14px">Немає користувачів</p>';
+}
+
+function getTotalStrikes(nick){
+  return Object.values(allListings).filter(l=>l.owner===nick).reduce((a,l)=>a+(l.strikes||0),0);
+}
+
+window.adminStrike = function(id){
+  pendingStrikeListingId = id;
+  const l = allListings[id];
+  document.getElementById('strikeListingTitle').textContent = l?.title||id;
+  document.getElementById('strikeReason').value='';
+  document.getElementById('strikeModal').classList.add('open');
+};
+
+window.confirmStrike = async function(){
+  const id=pendingStrikeListingId; if(!id) return;
+  const l=allListings[id]; if(!l) return;
+  const reason=document.getElementById('strikeReason').value.trim();
+  const newStrikes=(l.strikes||0)+1;
+  const updates = { strikes: newStrikes };
+  if(reason) updates.strikeReason = reason;
+  if(newStrikes>=2){ updates.deleted=true; showNotif('Оголошення видалено (2 страйки)','error'); }
+  else showNotif('Страйк видано','info');
+  await update(ref(db,'listings/'+id), updates);
+  closeModal('strikeModal');
+};
+
+window.adminDeleteListing = async function(id){
+  if(!confirm('Видалити це оголошення?')) return;
+  await update(ref(db,'listings/'+id),{deleted:true});
+  showNotif('Оголошення видалено','success');
+};
+
+window.adminBan = async function(nick){
+  if(!confirm(`Заблокувати @${nick}?`)) return;
+  await update(ref(db,'users/'+nick),{banned:true});
+  showNotif(`@${nick} заблоковано`,'error');
+};
+
+window.adminUnban = async function(nick){
+  await update(ref(db,'users/'+nick),{banned:false});
+  showNotif(`@${nick} розблоковано`,'success');
+};
+
+window.adminDeleteUser = async function(nick){
+  if(!confirm(`Повністю видалити акаунт @${nick}? Цю дію не можна скасувати.`)) return;
+  await remove(ref(db,'users/'+nick));
+  showNotif(`Акаунт @${nick} видалено`,'error');
+};
+
+// ─── MODALS ─────────────────────────────────────────────────────────────────
+window.closeModal = function(id){
+  document.getElementById(id).classList.remove('open');
+};
+document.addEventListener('click', function(e){
+  if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('open');
+});
+</script>
+</body>
+</html>
